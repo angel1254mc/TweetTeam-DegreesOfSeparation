@@ -47,6 +47,8 @@ int main() {
     cout << "The minimum degrees of separation between " << user1 << " and " << user2 << " is: " << dist << endl;
     cout << "type anything and press enter to terminate the program." << endl;
     cin >> terminate;
+    data.close();
+    delete NetworkGraph;
     return 0;
 }
 //Just a small graph to test that the adjacency list class is working

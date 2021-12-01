@@ -5,13 +5,9 @@
 #include <set>
 #include <string>
 #include <algorithm>
-//#include <boost/graph/adjacency_list.hpp>
-//#include <boost/graph/adjacency_matrix.hpp>
-//#include <boost/graph/properties.hpp>
-//#include <boost/graph/named_function_params.hpp>
 #include <iostream>
 using namespace std;
-//using namespace boost;
+//Arbitrary UserNode class. Currently not in use.
 struct UserNode {
     string username;
     string userID;
@@ -24,16 +20,8 @@ struct UserNode {
     
 };
 
-/**struct VertexData {
-    UserNode* userData;
-    string userID;
-    VertexData(UserNode* user_Data = nullptr, string user_ID = "") :
-    userData(user_Data), userID(user_ID) {};
-};
-*/
 class AdjMatrix {
     private:
-        //typedef adjacency_matrix<vecS, vecS, boost::directedS, boost::property<boost::vertex_name_t, string>, boost::property<boost::edge_weight_t, double>> boostMatrix;
         int curr_size;
         int total_size;
         map<string, int> vertices;
@@ -47,10 +35,13 @@ class AdjMatrix {
         vector<string> getAdjacent(string vertex);
         void printAdjMatrix();
 };
+
+/**
+ * Adjacency List implementation using a vector of maps with <string, double> key-value pairs. the double corresponds to the weight of an edge
+ * @note Probably needs to be modified to take in integers rather than strings for storage optimization.
+ */
 class AdjList {
     private:
-        //typedef adjacency_list<vecS,vecS, boost::bidirectionalS, boost::property<boost::vertex_name_t, string>, boost::property<boost::edge_weight_t,double>> boostList;
-        //boostList BoostList;
         int curr_size;
         int total_size;
         map<string, int> vertices;
@@ -70,7 +61,6 @@ AdjMatrix::AdjMatrix(int vertices)
 {
     curr_size = 0;
     total_size = vertices;
-    //boostMatrix BoostMatrix(vertices, );
     adjMatrix = new double*[vertices];
     for (int i = 0; i < vertices; i++)
     {
@@ -134,6 +124,11 @@ void AdjMatrix::printAdjMatrix()
         cout << endl;
     }
 }
+/**
+ * Adjacency List constructor, takes in an integer that denotes the max number of vertices.
+ * @param vertices describes the number of vertices
+ * @note doubles are automatically 0 initialized, but it can be changed to another value
+ */
 AdjList::AdjList(int vertices)
 {
     total_size = vertices;
@@ -143,6 +138,13 @@ AdjList::AdjList(int vertices)
     for (int i = 0; i < vertices; i++)
     adjList[i] = map<string, double>();
 };
+
+/**
+ * Inserts vertex if it is not found in the vertices map
+ * @param vertex is a string that contains the userID for the newly inserted vertex
+ * @note commented lines in the function relate to the boost library.
+ * We probably won't need this function much, since InsertEdge accomplishes the same thing
+ */
 void AdjList::insertVertex(string vertex)
 {
     if (vertices.find(vertex) == vertices.end())
@@ -152,6 +154,12 @@ void AdjList::insertVertex(string vertex)
     }
     //get(boost::vertex_name, BoostList)[vertices[vertex]] = vertex; 
 };
+/**
+ * Inserts edges and vertices if they are not already found in the vertices map
+ * @param from denotes the origin string
+ * @param to denotes the end of the edge
+ * @param weight denotes the weight of the edge
+ */
 void AdjList::insertEdge(string from, string to, double weight)
 {
     if (vertices.find(from) == vertices.end())
@@ -162,6 +170,12 @@ void AdjList::insertEdge(string from, string to, double weight)
     //get(boost::edge_weight, BoostList)[edge.first] = weight;
     adjList.at(vertices[from])[to] = weight;
 };
+/**
+ * Checks whether the edge exists
+ * @param from denotes the origin vertex of the edge
+ * @param to denotes the end of the edge
+ * @note if the weight of the edge is 0, return false. Otherwise, return true
+ */
 bool AdjList::isEdge(string from, string to)
 {
     /**
@@ -173,11 +187,20 @@ bool AdjList::isEdge(string from, string to)
         return true;
     return false;
 };
+
+/** returns the weight of the edge between vertex from and vertex to
+ * @param from denotes the origin vertex of the edge
+ * @param to denotes the end of the edge
+ */
 double AdjList::getWeight(string from, string to)
 {
     //return get(boost::edge_weight, BoostList)[edge(vertices[from], vertices[to], BoostList).first];
     return adjList[vertices[from]][to];
 };
+/** gets the out-edges of a particular vertex (does not get the in-edges)
+ * @param vertex denotes the vertex whose out-edges we are trying to obtain
+ * @note this function could be modified to include in-edges, but that depends on whether we will need it for conducting our graph search algorithms
+ */
 vector<string> AdjList::getAdjacent(string vertex)
 {
     vector<string> adjacentNodes;
@@ -188,6 +211,9 @@ vector<string> AdjList::getAdjacent(string vertex)
         adjacentNodes.push_back(pair.first);
         return adjacentNodes;
 };
+/** Prints the adjacency list
+ * @note this function takes literal hours for anything above 400,000 vertices
+ */
 void AdjList::printAdjList()
 {
     vector<pair<int,string>> ordered_indices;
@@ -206,6 +232,10 @@ void AdjList::printAdjList()
     }
 };
 
+/** Algorithm that performs djikstra's search algorithm until the distance is found 
+ * @param node1 denotes the origin node of the search
+ * @param node2 denotes the end node of the search
+ */
 double AdjList::djikstra(string node1, string node2)
 {
     //the vertices map holds the indices for all the nodes
