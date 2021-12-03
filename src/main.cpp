@@ -17,7 +17,7 @@ using namespace std;
 //Here we take advantage of the unordered Map. If there is no value corresponding to either of the usernames, we ask the user to try again
 //We also give the user the option to change both of his decisions by starting again (user types -1)
 int main() {
-    AdjList* NetworkGraph = new AdjList(456626);
+    EdgeList* NetworkGraph = new EdgeList();
     ifstream data;
     string user1;
     string user2;
@@ -27,7 +27,7 @@ int main() {
     data.open("../higgs-social_network.txt");
     dataParse::loadNetwork(&data, NetworkGraph);
     //The line below prints the full adjacency list.
-    //NetworkGraph->printAdjList();
+    //NetworkGraph->printEdgeList();
     cout << "Welcome to the TweetTeam's Degree of Separation Finder" << endl;
     cout << "For this stage of the project, we will be using a dataset containing twitter follower-following networks relating to the Higgs Boson discovery." << endl;
     cout << "These tweets are anonymized, so users are denoted by user ID's ranging from 1 to 456626" << endl;
@@ -43,7 +43,7 @@ int main() {
     cout << "2 : Djikstra's with Edge List" << endl;
     cin >> searchAlgo;
     cout << "Beginning search..." << endl;
-    double dist = NetworkGraph->djikstra(user1, user2);
+    double dist = NetworkGraph->djikstra(stoi(user1), stoi(user2));
     cout << "The minimum degrees of separation between " << user1 << " and " << user2 << " is: " << dist << endl;
     cout << "type anything and press enter to terminate the program." << endl;
     cin >> terminate;
