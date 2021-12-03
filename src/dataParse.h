@@ -11,7 +11,7 @@ using namespace std;
  * Static class that contains all functions related to parsing and storing dataset
  */
 struct dataParse {
-    static void loadNetwork(ifstream* dataStream, AdjMatrix* graph);
+    static void loadNetwork(ifstream* dataStream, EdgeList* graph);
     static void loadNetwork(ifstream* dataStream, AdjList* graph);
 };
 
@@ -22,7 +22,7 @@ struct dataParse {
  * @param graph denotes a pointer to the graph object. Can either be an Adjacency List or an Edge List
  * @note ifstream needs to have opened file already open
  */
-void dataParse::loadNetwork(ifstream* dataStream, AdjMatrix* graph)
+void dataParse::loadNetwork(ifstream* dataStream, EdgeList* graph)
 {
     int weight = 1; // This weight changes depending on the dataset. In this case, its just 1.
     vector<pair<string, string>> EdgeList;
@@ -39,7 +39,7 @@ void dataParse::loadNetwork(ifstream* dataStream, AdjMatrix* graph)
     }
     for (auto pair : EdgeList)
     {
-        graph->insertEdge(pair.first, pair.second, weight);
+        graph->insertEdge(stoi(pair.first), stoi(pair.second), weight);
     }
 }
 
@@ -60,6 +60,6 @@ void dataParse::loadNetwork(ifstream* dataStream, AdjList* graph)
     }
     for (auto pair : EdgeList)
     {
-        graph->insertEdge(pair.first, pair.second, weight);
+        graph->insertEdge(stoi(pair.first), stoi(pair.second), weight);
     }
 }
