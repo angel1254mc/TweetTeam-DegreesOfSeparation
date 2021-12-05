@@ -25,7 +25,9 @@ struct UserNode {
 class EdgeList {
     private:
         int curr_size;
+        int vertices_amount;
         map<pair<int, int>, double>* edgeList;
+        map<int, int> vertices;
     public:
         EdgeList();
         void insertEdge(int from, int to, double weight);
@@ -34,6 +36,7 @@ class EdgeList {
         vector<int> getAdjacent(int vertex);
         void printEdgeList();
         double djikstra(int from, int to);
+        int getNumVertices();
 };
 
 /**
@@ -43,6 +46,7 @@ class EdgeList {
 EdgeList::EdgeList()
 {
     curr_size = 0;
+    vertices_amount = 0;
     edgeList = new map<pair<int,int>, double>();
 };
 
@@ -52,6 +56,10 @@ EdgeList::EdgeList()
  */
 void EdgeList::insertEdge(int from, int to, double weight)
 {
+    if (vertices.find(from) == vertices.end())
+        vertices[from] = vertices_amount++;
+    if (vertices.find(to) == vertices.end())
+        vertices[to] = vertices_amount++;
     pair<int,int> edge = pair<int,int>(from, to);
     if ((*edgeList)[edge] == 0)
         curr_size++;
@@ -127,6 +135,11 @@ double EdgeList::djikstra(int from, int to)
     return 0.0;
 }
 
+int EdgeList::getNumVertices()
+{
+    return vertices_amount;
+}
+
 
 /**
  * Adjacency List implementation using a vector of maps with <string, double> key-value pairs. the double corresponds to the weight of an edge
@@ -146,6 +159,7 @@ class AdjList {
         vector<int> getAdjacent(int vertex);
         void printAdjList();
         double djikstra(int node1, int node2);
+        int getNumVertices();
 };
 
 /**
@@ -261,6 +275,11 @@ void AdjList::printAdjList()
  * @param node1 denotes the origin node of the search
  * @param node2 denotes the end node of the search
  */
+
+int AdjList::getNumVertices()
+{
+    return curr_size;
+}
 double AdjList::djikstra(int node1, int node2)
 {
     //the vertices map holds the indices for all the nodes
