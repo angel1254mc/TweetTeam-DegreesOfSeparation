@@ -28,6 +28,7 @@ int main() {
     dataParse::loadNetwork(&data, NetworkGraph);
     //The line below prints the full adjacency list.
     //NetworkGraph->printEdgeList();
+    cout << "Amount of vertices: " << NetworkGraph->getNumVertices() << endl;
     cout << "Welcome to the TweetTeam's Degree of Separation Finder" << endl;
     cout << "For this stage of the project, we will be using a dataset containing twitter follower-following networks relating to the Higgs Boson discovery." << endl;
     cout << "These tweets are anonymized, so users are denoted by user ID's ranging from 1 to 456626" << endl;
