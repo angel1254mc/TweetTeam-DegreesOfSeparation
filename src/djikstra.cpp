@@ -49,8 +49,8 @@ double EdgeList::djikstra(int from, int to){
 		Returns the shortest path between two nodes.	
 	*/
 	priority_queue < pair<double, int>, vector< pair<double, int> >, greater< pair<double, int> > > queue; //(weight, vertex)
-	
-	vector<double> distances(this->total_size, INT_MAX);
+	int vertices_count = this->getNumVertices();
+	vector<double> distances(vertices_count, INT_MAX);
 	//vector<int> previous(this->total_size, -1);
 	
 	queue.push(pair<double, int>{0.0, from});
