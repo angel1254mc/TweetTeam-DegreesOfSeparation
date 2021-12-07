@@ -6,7 +6,10 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include <queue>
 using namespace std;
+//Last updated 12/6/2021 by Jeya Iyadurai (added Djikstras)
+
 //Arbitrary UserNode class. Currently not in use.
 struct UserNode {
     string userID;
@@ -127,13 +130,49 @@ void EdgeList::printEdgeList()
  * @param node1 denotes the origin node of the search
  * @param node2 denotes the end node of the search
  */
-double EdgeList::djikstra(int from, int to)
-{
+//double EdgeList::djikstra(int from, int to);
     //This structure holds edges. The edges can be accessed by either iterating over the map that holds them, or accessing them directly by using edgeList[pair<int,int>(start_vertex, end_vertex)]
     //You can use getAdjacent(vertex) to obtain the int values of the outedge vertices. 
     //For instance, if you have a graph 1->2 where 1 and 2 are vertices, using getAdjacent(1) will return a vector containing 2. If you want to obtain the weight of said edge, you can then use edgeList[pair<int,int>(1,2)]
-    return 0.0;
+double EdgeList::djikstra(int from, int to){
+	/*
+	Notes: 
+		Current implementation does not require "previous" vector.
+		Returns the shortest path between two nodes.	
+	*/
+	priority_queue < pair<double, int>, vector< pair<double, int> >, greater< pair<double, int> > > pqueue; //(weight, vertex)
+	int vertices_count = this->getNumVertices();
+	vector<double> distances(vertices_count + 1, INT_MAX);
+	//vector<int> previous(this->total_size, -1);
+	
+	pqueue.push(pair<double, int>{0.0, from});
+	
+	distances[from] = 0.0;
+	int count = 0;
+	while(!pqueue.empty()){
+		int vertex = pqueue.top().second;
+		pqueue.pop();
+		count++;
+		if(count%1000 == 0){
+			cout << "1k processed";
+		}
+		//cout << pqueue.size() << endl;
+		auto adjacentVertices = this->getAdjacent(vertex);
+		for(auto adjacent : adjacentVertices){
+			//USING PSEUDOCODE FROM AMAN'S LECTURE ON GRAPH ALGORITHMS FOR THIS RELAXATION//
+			if(distances[vertex] + this->getWeight(vertex, adjacent) < distances[adjacent]){
+				distances[adjacent] = distances[vertex] + this->getWeight(vertex, adjacent);
+				//previous[adjacent] = vertex;
+				pqueue.push(pair<double, int>{distances[adjacent], adjacent});
+			}
+			
+		}
+	}
+	
+	return distances[to];
 }
+
+
 
 int EdgeList::getNumVertices()
 {
@@ -280,11 +319,42 @@ int AdjList::getNumVertices()
 {
     return curr_size;
 }
-double AdjList::djikstra(int node1, int node2)
-{
-    //the vertices map holds the indices for all the nodes
-    //vertices[string] will return the index corresponding to the string/node
-    //The adjacency list is a vector of maps of <string, double> where the string denotes the userID and the double is the weight
-    //the adjacency list is generally accessed using adjList[vertices[node1]][node2]
-    return 0.0;
-};
+	
+double AdjList::djikstra(int from, int to){
+	/*
+	Notes: 
+		Current implementation does not require "previous" vector.
+		Returns the shortest path between two nodes.	
+	*/
+	priority_queue < pair<double, int>, vector< pair<double, int> >, greater< pair<double, int> > > pqueue; //(weight, vertex)
+	
+	vector<double> distances(this->curr_size+1, INT_MAX);
+	//vector<int> previous(this->total_size, -1);
+	
+	pqueue.push(pair<double, int>{0.0, from});
+	
+	distances[from] = 0.0;
+	int count = 0;
+	
+	while(!pqueue.empty()){
+		int vertex = pqueue.top().second;
+		pqueue.pop();
+		
+		count++;
+		if(count%1000 == 0){
+			cout << "1k processed";
+		}
+		
+		auto adjacentVertices = this->getAdjacent(vertex);
+		for(auto adjacent : adjacentVertices){
+			//USING PSEUDOCODE FROM AMAN'S LECTURE ON GRAPH ALGORITHMS FOR THIS RELAXATION//
+			if(distances[vertex] + this->getWeight(vertex, adjacent) < distances[adjacent]){
+				distances[adjacent] = distances[vertex] + this->getWeight(vertex, adjacent);
+				//previous[adjacent] = vertex;
+				pqueue.push(pair<double, int>{distances[adjacent], adjacent});
+			}
+		}
+	}
+	
+	return distances[to];
+}
