@@ -8,7 +8,7 @@
 #include <iostream>
 #include <queue>
 using namespace std;
-//Last updated 12/6/2021 by Jeya Iyadurai (added Djikstras)
+//Last updated 12/7/2021 by Jeya Iyadurai (added BFS based degrees of separation)
 
 //Arbitrary UserNode class. Currently not in use.
 struct UserNode {
@@ -40,6 +40,7 @@ class EdgeList {
         void printEdgeList();
         double djikstra(int from, int to);
         int getNumVertices();
+	unsigned int degrees_of_separation(int from, int to);
 };
 
 /**
@@ -176,6 +177,40 @@ int EdgeList::getNumVertices()
     return vertices_amount;
 }
 
+unsigned int EdgeList::degrees_of_separation(int from, int to){
+	if(from == to){
+		return 0;
+	}
+	
+	queue<int> BFS_queue;
+	unordered_set<int> visited;
+	
+	BFS_queue.push(from);
+	visited.emplace(from);
+	int distance = 0;
+	
+	while(!BFS_queue.empty()){
+		int size = BFS_queue.size();
+		distance++;
+		for(int i = 0; i < size; i++){
+			int vertex = BFS_queue.front();
+			auto adjacentVertices = this->getAdjacent(vertex);
+			for(auto adjacent : adjacentVertices){
+				if(adjacent == to){
+					return distance;
+				}else{
+					if(visited.count(adjacent) == 0){
+						visited.emplace(adjacent);
+						BFS_queue.push(adjacent);
+					}
+				}
+			}
+			BFS_queue.pop();
+		}
+	}
+	
+	return distance;
+}
 
 /**
  * Adjacency List implementation using a vector of maps with <string, double> key-value pairs. the double corresponds to the weight of an edge
@@ -196,6 +231,7 @@ class AdjList {
         void printAdjList();
         double djikstra(int node1, int node2);
         int getNumVertices();
+	unsigned int degrees_of_separation(int from, int to);
 };
 
 /**
@@ -349,4 +385,73 @@ double AdjList::djikstra(int from, int to){
 	}
 	
 	return distances[to];
+}
+
+double AdjList::djikstra(int from, int to){
+	/*
+	Notes: 
+		Current implementation does not require "previous" vector.
+		Returns the shortest path between two nodes.	
+	*/
+	priority_queue < pair<double, int>, vector< pair<double, int> >, greater< pair<double, int> > > pqueue; //(weight, vertex)
+	
+	vector<double> distances(this->curr_size+1, INT_MAX);
+	//vector<int> previous(this->total_size, -1);
+	
+	pqueue.push(pair<double, int>{0.0, from});
+	
+	distances[from] = 0.0;
+	//int count = 0;
+	while(!pqueue.empty()){
+		int vertex = pqueue.top().second;
+		pqueue.pop();
+		//count++;
+		//cout << "Processed " << count << endl;
+		auto adjacentVertices = this->getAdjacent(vertex);
+		for(auto adjacent : adjacentVertices){
+			//USING PSEUDOCODE FROM AMAN'S LECTURE ON GRAPH ALGORITHMS FOR THIS RELAXATION//
+			if(distances[vertex] + this->getWeight(vertex, adjacent) < distances[adjacent]){
+				distances[adjacent] = distances[vertex] + this->getWeight(vertex, adjacent);
+				//previous[adjacent] = vertex;
+				pqueue.push(pair<double, int>{distances[adjacent], adjacent});
+			}
+		}
+	}
+	
+	return distances[to];
+}
+
+unsigned int AdjList::degrees_of_separation(int from, int to){
+	if(from == to){
+		return 0;
+	}
+	
+	queue<int> BFS_queue;
+	unordered_set<int> visited;
+	
+	BFS_queue.push(from);
+	visited.emplace(from);
+	int distance = 0;
+	
+	while(!BFS_queue.empty()){
+		int size = BFS_queue.size();
+		distance++;
+		for(int i = 0; i < size; i++){
+			int vertex = BFS_queue.front();
+			auto adjacentVertices = this->getAdjacent(vertex);
+			for(auto adjacent : adjacentVertices){
+				if(adjacent == to){
+					return distance;
+				}else{
+					if(visited.count(adjacent) == 0){
+						visited.emplace(adjacent);
+						BFS_queue.push(adjacent);
+					}
+				}
+			}
+			BFS_queue.pop();
+		}
+	}
+	
+	return distance;
 }
