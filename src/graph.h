@@ -148,14 +148,11 @@ double EdgeList::djikstra(int from, int to){
 	pqueue.push(pair<double, int>{0.0, from});
 	
 	distances[from] = 0.0;
-	int count = 0;
+	
 	while(!pqueue.empty()){
 		int vertex = pqueue.top().second;
 		pqueue.pop();
-		count++;
-		if(count%1000 == 0){
-			cout << "1k processed";
-		}
+		
 		//cout << pqueue.size() << endl;
 		auto adjacentVertices = this->getAdjacent(vertex);
 		for(auto adjacent : adjacentVertices){
@@ -334,16 +331,11 @@ double AdjList::djikstra(int from, int to){
 	pqueue.push(pair<double, int>{0.0, from});
 	
 	distances[from] = 0.0;
-	int count = 0;
 	
 	while(!pqueue.empty()){
 		int vertex = pqueue.top().second;
 		pqueue.pop();
-		
-		count++;
-		if(count%1000 == 0){
-			cout << "1k processed";
-		}
+	
 		
 		auto adjacentVertices = this->getAdjacent(vertex);
 		for(auto adjacent : adjacentVertices){
