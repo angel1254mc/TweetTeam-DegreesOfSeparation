@@ -11,8 +11,7 @@ using namespace std;
 double AdjList::djikstra(int from, int to){
 	/*
 	Notes: 
-		Current implementation does not require "previous" vector.
-		Returns the shortest path between two nodes.	
+		Not in use, use function from graph.h
 	*/
 	priority_queue < pair<double, int>, vector< pair<double, int> >, greater< pair<double, int> > > pqueue; //(weight, vertex)
 	
@@ -50,8 +49,7 @@ double AdjList::djikstra(int from, int to){
 double EdgeList::djikstra(int from, int to){
 	/*
 	Notes: 
-		Current implementation does not require "previous" vector.
-		Returns the shortest path between two nodes.	
+		Not in use, use function from graph.h
 	*/
 	priority_queue < pair<double, int>, vector< pair<double, int> >, greater< pair<double, int> > > pqueue; //(weight, vertex)
 	int vertices_count = this->getNumVertices();
