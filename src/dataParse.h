@@ -77,6 +77,7 @@ void dataParse::loadNetwork(ifstream* dataStream, AdjList* graph)
  */
 void dataParse::loadNetworkDual(ifstream* dataStream, AdjList* AdjGraph, EdgeList* EdgeGraph)
 {
+    int i = 0;
     int weight = 1; // This weight changes depending on the dataset. In this case, its just 1.
     //vector<pair<string, string>> EdgeList;
     string parse = "not empty";
@@ -91,5 +92,6 @@ void dataParse::loadNetworkDual(ifstream* dataStream, AdjList* AdjGraph, EdgeLis
         //EdgeList.push_back(pair<string,string>(temp, parse));
         AdjGraph->insertEdge(stoi(temp), stoi(parse), weight);
         EdgeGraph->insertEdge(stoi(temp),stoi(parse),weight);
+        i++;
     }
 }
