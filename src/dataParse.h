@@ -14,6 +14,7 @@ struct dataParse {
     static void loadNetwork(ifstream* dataStream, EdgeList* graph);
     static void loadNetwork(ifstream* dataStream, AdjList* graph);
     static void loadNetworkDual(ifstream* dataStream, AdjList* AdjGraph, EdgeList* EdgeGraph);
+    static void loadNetworkDualString(ifstream* dataStream, AdjList* AdjGraph, EdgeList* EdgeGraph);
 };
 
 /**
@@ -93,5 +94,36 @@ void dataParse::loadNetworkDual(ifstream* dataStream, AdjList* AdjGraph, EdgeLis
         AdjGraph->insertEdge(stoi(temp), stoi(parse), weight);
         EdgeGraph->insertEdge(stoi(temp),stoi(parse),weight);
         i++;
+    }
+}
+
+void dataParse::loadNetworkDualString(ifstream* dataStream, AdjList* AdjGraph, EdgeList* EdgeGraph)
+{
+    int i = 0;
+    int count = 0;
+    int weight = 1; // This weight changes depending on the dataset. In this case, its just 1.
+    //vector<pair<string, string>> EdgeList;
+    map<string, int> name_mapper;
+    string parse = "not empty";
+    string temp;
+    while (parse != "")
+    {
+        getline(*dataStream, parse, ' ');
+        temp = parse;
+        getline(*dataStream, parse, '\n');
+        if (parse == "")
+            break;
+        if (name_mapper.find(parse) == name_mapper.end())
+        {
+            name_mapper[parse] = i++;
+        }
+        if (name_mapper.find(temp) == name_mapper.end())
+        {
+            name_mapper[temp] = i++;
+        }
+        //EdgeList.push_back(pair<string,string>(temp, parse));
+        AdjGraph->insertEdge(name_mapper[temp], name_mapper[parse], weight);
+        EdgeGraph->insertEdge(name_mapper[temp],name_mapper[parse],weight);
+        count++;
     }
 }
