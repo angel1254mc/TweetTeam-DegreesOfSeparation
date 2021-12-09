@@ -11,9 +11,8 @@
 #include <set>
 #include <climits>
 #include <unordered_set>
-#include <stack>
 using namespace std;
-//Last updated 12/7/2021 by Jeya Iyadurai (added path for BFS and Djikstra's)
+//Last updated 12/7/2021 by Jeya Iyadurai (added BFS based degrees of separation)
 
 //Arbitrary UserNode class. Currently not in use.
 struct VertexData {
@@ -32,7 +31,7 @@ class EdgeList {
     private:
         int curr_size;
         int vertices_amount;
-        map<int, VertexData> vertexData;
+        unordered_map<int, VertexData> vertexData;
         map<pair<int, int>, double>* edgeList;
         map<int, int> vertices;
     public:
@@ -140,10 +139,14 @@ void EdgeList::printEdgeList()
     }
 }
 
-/** Algorithm that performs djikstra's search algorithm until the distance is found and prints the found path
+/** Algorithm that performs djikstra's search algorithm until the distance is found 
  * @param node1 denotes the origin node of the search
  * @param node2 denotes the end node of the search
  */
+//double EdgeList::djikstra(int from, int to);
+    //This structure holds edges. The edges can be accessed by either iterating over the map that holds them, or accessing them directly by using edgeList[pair<int,int>(start_vertex, end_vertex)]
+    //You can use getAdjacent(vertex) to obtain the int values of the outedge vertices. 
+    //For instance, if you have a graph 1->2 where 1 and 2 are vertices, using getAdjacent(1) will return a vector containing 2. If you want to obtain the weight of said edge, you can then use edgeList[pair<int,int>(1,2)]
 double EdgeList::djikstra(int from, int to){
 	/*
 	Notes: 
@@ -153,7 +156,7 @@ double EdgeList::djikstra(int from, int to){
 	priority_queue < pair<double, int>, vector< pair<double, int> >, greater< pair<double, int> > > pqueue; //(weight, vertex)
 	int vertices_count = this->getNumVertices();
 	vector<double> distances(vertices_count + 1, INT_MAX);
-	vector<double> previous(this->curr_size+1, -1);
+	//vector<int> previous(this->total_size, -1);
 	
 	pqueue.push(pair<double, int>{0.0, from});
 	
@@ -169,30 +172,12 @@ double EdgeList::djikstra(int from, int to){
 			//USING PSEUDOCODE FROM AMAN'S LECTURE ON GRAPH ALGORITHMS FOR THIS RELAXATION//
 			if(distances[vertex] + this->getWeight(vertex, adjacent) < distances[adjacent]){
 				distances[adjacent] = distances[vertex] + this->getWeight(vertex, adjacent);
-				previous[adjacent] = vertex;
+				//previous[adjacent] = vertex;
 				pqueue.push(pair<double, int>{distances[adjacent], adjacent});
 			}
 			
 		}
 	}
-	
-	stack<int> s;
-	s.push(to);
-	int path_vertex = to;
-	
-	while(path_vertex != from){
-		path_vertex = previous[path_vertex];
-		//cout << path_vertex << endl;
-		s.push(path_vertex);
-	}
-	cout << "Path found: ";
-	while(s.size() != 1){
-		cout << s.top() << "->";
-		s.pop();
-	}
-	cout << s.top();
-	s.pop();
-	cout << endl;
 	
 	return distances[to];
 }
@@ -204,11 +189,6 @@ int EdgeList::getNumVertices()
     return vertices_amount;
 }
 
-
-/** Algorithm that performs a BFS until the degrees of separation between from and to is found and prints the found path
- * @param node1 denotes the origin node of the search
- * @param node2 denotes the end node of the search
- */
 unsigned int EdgeList::degrees_of_separation(int from, int to){
 	if(from == to){
 		return 0;
@@ -216,7 +196,6 @@ unsigned int EdgeList::degrees_of_separation(int from, int to){
 	
 	queue<int> BFS_queue;
 	unordered_set<int> visited;
-	vector<double> previous(this->curr_size+1, -1);
 	
 	BFS_queue.push(from);
 	visited.emplace(from);
@@ -230,36 +209,18 @@ unsigned int EdgeList::degrees_of_separation(int from, int to){
 			auto adjacentVertices = this->getAdjacent(vertex);
 			for(auto adjacent : adjacentVertices){
 				if(adjacent == to){
-					previous[adjacent] = vertex;
-					//cout << "Here";
-					goto COMPLETE;
-				} else if(visited.count(adjacent) == 0){
-					previous[adjacent] = vertex;
-					visited.emplace(adjacent);
-					BFS_queue.push(adjacent);
+					return distance;
+				}else{
+					if(visited.count(adjacent) == 0){
+						visited.emplace(adjacent);
+						BFS_queue.push(adjacent);
+					}
 				}
 			}
 			BFS_queue.pop();
 		}
 	}
 	
-	COMPLETE: stack<int> s;
-	s.push(to);
-	int path_vertex = to;
-	
-	while(path_vertex != from){
-		path_vertex = previous[path_vertex];
-		//cout << path_vertex << endl;
-		s.push(path_vertex);
-	}
-	cout << "Path found: ";
-	while(s.size() != 1){
-		cout << s.top() << "->";
-		s.pop();
-	}
-	cout << s.top();
-	s.pop();
-	cout << endl;
 	return distance;
 }
 
@@ -270,9 +231,9 @@ class AdjList {
     private:
         int curr_size;
         int total_size;
-        map<int, VertexData> vertexData;
-        map<int, int> vertices;
-        vector<map<int, double>> adjList;
+        unordered_map<int, VertexData> vertexData;
+        unordered_map<int, int> vertices;
+        vector<unordered_map<int, double>> adjList;
     public:
         AdjList(int vertices);
         void insertEdge(int from, int to, double weight);
@@ -297,9 +258,9 @@ AdjList::AdjList(int vertices)
     total_size = vertices;
     curr_size = 0;
     //boostList BoostList(vertices);
-    adjList = vector<map<int, double>>(vertices);
+    adjList = vector<unordered_map<int, double>>(vertices);
     for (int i = 0; i < vertices; i++)
-    adjList[i] = map<int, double>();
+    adjList[i] = unordered_map<int, double>();
 };
 
 /**
@@ -380,7 +341,7 @@ vector<int> AdjList::getAdjacent(int vertex)
     vector<int> adjacentNodes;
     if (vertices.find(vertex) == vertices.end())
         return vector<int>(0);
-    map<int, double> adjacencyMap = adjList.at(vertices[vertex]);
+    unordered_map<int, double> adjacencyMap = adjList.at(vertices[vertex]);
     for (auto pair : adjacencyMap)
         adjacentNodes.push_back(pair.first);
         return adjacentNodes;
@@ -407,6 +368,10 @@ void AdjList::printAdjList()
     }
 };
 
+/** Algorithm that performs djikstra's search algorithm until the distance is found 
+ * @param node1 denotes the origin node of the search
+ * @param node2 denotes the end node of the search
+ */
 
 int AdjList::getNumVertices()
 {
@@ -414,10 +379,6 @@ int AdjList::getNumVertices()
 }
 	
 
-/** Algorithm that performs djikstra's search algorithm until the distance is found and prints the found path
- * @param node1 denotes the origin node of the search
- * @param node2 denotes the end node of the search
- */
 double AdjList::djikstra(int from, int to){
 	/*
 	Notes: 
@@ -427,7 +388,7 @@ double AdjList::djikstra(int from, int to){
 	priority_queue < pair<double, int>, vector< pair<double, int> >, greater< pair<double, int> > > pqueue; //(weight, vertex)
 	
 	vector<double> distances(this->curr_size+1, INT_MAX);
-	vector<double> previous(this->curr_size+1, -1);
+	//vector<int> previous(this->total_size, -1);
 	
 	pqueue.push(pair<double, int>{0.0, from});
 	
@@ -443,95 +404,47 @@ double AdjList::djikstra(int from, int to){
 			//USING PSEUDOCODE FROM AMAN'S LECTURE ON GRAPH ALGORITHMS FOR THIS RELAXATION//
 			if(distances[vertex] + this->getWeight(vertex, adjacent) < distances[adjacent]){
 				distances[adjacent] = distances[vertex] + this->getWeight(vertex, adjacent);
-				previous[adjacent] = vertex;
+				//previous[adjacent] = vertex;
 				pqueue.push(pair<double, int>{distances[adjacent], adjacent});
 			}
 		}
 	}
 	
-	stack<int> s;
-	s.push(to);
-	int path_vertex = to;
-	
-	while(path_vertex != from){
-		path_vertex = previous[path_vertex];
-		//cout << path_vertex << endl;
-		s.push(path_vertex);
-	}
-	cout << "Path found: ";
-	while(s.size() != 1){
-		cout << s.top() << "->";
-		s.pop();
-	}
-	cout << s.top();
-	s.pop();
-	cout << endl;
-	
 	return distances[to];
 }
 
-
-/** Algorithm that performs a BFS until the degrees of separation between from and to is found and prints the found path
- * @param node1 denotes the origin node of the search
- * @param node2 denotes the end node of the search
- */
 unsigned int AdjList::degrees_of_separation(int from, int to){
 	if(from == to){
 		return 0;
 	}
 	
-	
 	queue<int> BFS_queue;
 	unordered_set<int> visited;
-	vector<double> previous(this->curr_size+1, -1);
 	
 	BFS_queue.push(from);
 	visited.emplace(from);
 	int distance = 0;
 	
 	while(!BFS_queue.empty()){
-		
 		int size = BFS_queue.size();
 		distance++;
 		for(int i = 0; i < size; i++){
-			
 			int vertex = BFS_queue.front();
 			auto adjacentVertices = this->getAdjacent(vertex);
 			for(auto adjacent : adjacentVertices){
 				if(adjacent == to){
-					previous[adjacent] = vertex;
-					//cout << "Here";
-					goto COMPLETE;
-				} else if(visited.count(adjacent) == 0){
-					previous[adjacent] = vertex;
-					visited.emplace(adjacent);
-					BFS_queue.push(adjacent);
+					return distance;
+				}else{
+					if(visited.count(adjacent) == 0){
+						visited.emplace(adjacent);
+						BFS_queue.push(adjacent);
+					}
 				}
 			}
-			
 			BFS_queue.pop();
 		}
 	}
 	
-	
-	
-	COMPLETE: stack<int> s;
-	s.push(to);
-	int path_vertex = to;
-	
-	while(path_vertex != from){
-		path_vertex = previous[path_vertex];
-		//cout << path_vertex << endl;
-		s.push(path_vertex);
-	}
-	cout << "Path found: ";
-	while(s.size() != 1){
-		cout << s.top() << "->";
-		s.pop();
-	}
-	cout << s.top();
-	s.pop();
-	cout << endl;
 	return distance;
 };
 
