@@ -22,17 +22,18 @@ using namespace std;
 //We also give the user the option to change both of his decisions by starting again (user types -1)
 int main() {
     int numVert = 456627;
+    string vert;
     ifstream data;
     int user1;
     int user2;
     string trash;
     int searchAlgo;
-    double dist=0;
+    double dist = 0;
     string chosenFile = "../";
     string terminate = "";
     bool higgs = false;
-  
-    
+
+
     //The line below prints the full adjacency list.
     //NetworkGraph->printEdgeList();
     //cout << "Amount of vertices: " << NetworkGraph->getNumVertices() << endl;
@@ -47,27 +48,34 @@ int main() {
     else {
         chosenFile = "../" + chosenFile;
         cout << "Enter the number of vertices in this graph" << endl;
-        cin >> numVert;
+        cin >> vert;
+        numVert = stoi(vert);
     }
     AdjList* AdjListGraph = new AdjList(numVert);
     EdgeList* EdgeListGraph = new EdgeList();
     cout << "loading graph..." << endl;
-        auto t1 = Clock::now();
-        data.open(chosenFile);
-        dataParse::loadNetworkDual(&data, AdjListGraph, EdgeListGraph);
-        auto t2 = Clock::now();
-        std::cout << "This graph took "
-            << duration_cast<seconds>(t2 - t1).count()
-            << " seconds to parse" << '\n';
-        data.close();
-        cout << endl;
-
+    auto t1 = Clock::now();
+    data.open(chosenFile);
+    dataParse::loadNetworkDual(&data, AdjListGraph, EdgeListGraph);
+    auto t2 = Clock::now();
+    std::cout << "This graph took ";
         if (higgs) {
-            cout << "For this stage of the project, we will be using a dataset containing twitter follower-following networks relating to the Higgs Boson discovery." << endl;
-            cout << "These tweets are anonymized, so users are denoted by user ID's ranging from 1 to 456626" << endl;
-            cout << endl;
+            cout << duration_cast<seconds>(t2 - t1).count();
         }
-    
+        else {
+            cout << duration_cast<microseconds>(t2 - t1).count();
+        }
+       
+       cout  << " microseconds to parse" << '\n';
+    data.close();
+    cout << endl;
+
+    if (higgs) {
+        cout << "For this stage of the project, we will be using a dataset containing twitter follower-following networks relating to the Higgs Boson discovery." << endl;
+        cout << "These tweets are anonymized, so users are denoted by user ID's ranging from 1 to 456626" << endl;
+        cout << endl;
+    }
+
     while (terminate != "n")
     {
         cout << "Input the userID of the first user:" << endl;
@@ -124,45 +132,69 @@ int main() {
         cout << "Beginning search..." << endl;
         switch (searchAlgo) {
         case 1:
-             t1 = Clock::now();
+            t1 = Clock::now();
             dist = AdjListGraph->djikstra(user1, user2);
-             t2 = Clock::now();
-            std::cout << "This search took "
-                << duration_cast<seconds>(t2 - t1).count()
-                << " seconds!" << '\n';
+            t2 = Clock::now();
+            std::cout << "This search took ";
+            if (higgs) {
+                cout << duration_cast<seconds>(t2 - t1).count();
+               cout  << " seconds!" << '\n';
+            }
+            else {
+                cout << duration_cast<microseconds>(t2 - t1).count();
+                cout << " microseconds!" << endl;
+            }
             cout << "The shortest weighted path between " << user1 << " and " << user2 << " is: " << dist << endl;
             break;
         case 2:
-             t1 = Clock::now();
+            t1 = Clock::now();
             dist = EdgeListGraph->djikstra(user1, user2);
-             t2 = Clock::now();
-            std::cout << "This search took "
-                << duration_cast<seconds>(t2 - t1).count()
-                << " seconds!" << '\n';
+            t2 = Clock::now();
+            std::cout << "This search took ";
+            if (higgs) {
+                cout << duration_cast<seconds>(t2 - t1).count();
+                cout << " seconds!" << '\n';
+            }
+            else {
+                cout << duration_cast<microseconds>(t2 - t1).count();
+                cout <<  " microseconds!" << endl;
+            }
             cout << "The shortest weighted path between " << user1 << " and " << user2 << " is: " << dist << endl;
             break;
         case 3:
-             t1 = Clock::now();
+            t1 = Clock::now();
             dist = AdjListGraph->degrees_of_separation(user1, user2);
-             t2 = Clock::now();
-            std::cout << "This search took "
-                << duration_cast<seconds>(t2 - t1).count()
-                << " seconds!" << '\n';
+            t2 = Clock::now();
+            std::cout << "This search took ";
+            if (higgs) {
+                cout << duration_cast<seconds>(t2 - t1).count();
+                cout << " seconds!" << '\n';
+            }
+            else {
+                cout << duration_cast<microseconds>(t2 - t1).count();
+                cout << " microseconds!" << endl;
+            }
             cout << "The minimum degrees of separation between " << user1 << " and " << user2 << " is: " << dist << endl;
             break;
         case 4:
-             t1 = Clock::now();
+            t1 = Clock::now();
             dist = EdgeListGraph->degrees_of_separation(user1, user2);
-             t2 = Clock::now();
-            std::cout << "This search took "
-                << duration_cast<seconds>(t2 - t1).count()
-                << " seconds!" << '\n';
+            t2 = Clock::now();
+            std::cout << "This search took ";
+            if (higgs) {
+                cout << duration_cast<seconds>(t2 - t1).count();
+                cout << " seconds!" << '\n';
+            }
+            else {
+                cout << duration_cast<microseconds>(t2 - t1).count();
+                cout << " microseconds!" << endl;
+            }
             cout << "The minimum degrees of separation between " << user1 << " and " << user2 << " is: " << dist << endl;
             break;
         default:
             cout << "Something went wrong with the program" << endl;
         };
-     
+
         cout << "Would you like to search again? (type 'y' for \"yes\", or 'n' for \"no\"" << endl;
         cin >> terminate;
     }
