@@ -31,7 +31,7 @@ class EdgeList {
     private:
         int curr_size;
         int vertices_amount;
-        map<int, VertexData> vertexData;
+        unordered_map<int, VertexData> vertexData;
         map<pair<int, int>, double>* edgeList;
         map<int, int> vertices;
     public:
@@ -231,9 +231,9 @@ class AdjList {
     private:
         int curr_size;
         int total_size;
-        map<int, VertexData> vertexData;
-        map<int, int> vertices;
-        vector<map<int, double>> adjList;
+        unordered_map<int, VertexData> vertexData;
+        unordered_map<int, int> vertices;
+        vector<unordered_map<int, double>> adjList;
     public:
         AdjList(int vertices);
         void insertEdge(int from, int to, double weight);
@@ -258,9 +258,9 @@ AdjList::AdjList(int vertices)
     total_size = vertices;
     curr_size = 0;
     //boostList BoostList(vertices);
-    adjList = vector<map<int, double>>(vertices);
+    adjList = vector<unordered_map<int, double>>(vertices);
     for (int i = 0; i < vertices; i++)
-    adjList[i] = map<int, double>();
+    adjList[i] = unordered_map<int, double>();
 };
 
 /**
@@ -341,7 +341,7 @@ vector<int> AdjList::getAdjacent(int vertex)
     vector<int> adjacentNodes;
     if (vertices.find(vertex) == vertices.end())
         return vector<int>(0);
-    map<int, double> adjacencyMap = adjList.at(vertices[vertex]);
+    unordered_map<int, double> adjacencyMap = adjList.at(vertices[vertex]);
     for (auto pair : adjacencyMap)
         adjacentNodes.push_back(pair.first);
         return adjacentNodes;

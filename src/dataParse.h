@@ -99,7 +99,7 @@ void dataParse::loadNetworkDual(ifstream* dataStream, AdjList* AdjGraph, EdgeLis
 
 void dataParse::loadNetworkDualString(ifstream* dataStream, AdjList* AdjGraph, EdgeList* EdgeGraph)
 {
-    int i = 0;
+    int i = 1;
     int count = 0;
     int weight = 1; // This weight changes depending on the dataset. In this case, its just 1.
     //vector<pair<string, string>> EdgeList;
