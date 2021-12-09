@@ -21,30 +21,53 @@ using namespace std;
 //Here we take advantage of the unordered Map. If there is no value corresponding to either of the usernames, we ask the user to try again
 //We also give the user the option to change both of his decisions by starting again (user types -1)
 int main() {
-    AdjList* AdjListGraph = new AdjList(456627);
-    EdgeList* EdgeListGraph = new EdgeList();
+    int numVert = 456627;
     ifstream data;
     int user1;
     int user2;
     string trash;
     int searchAlgo;
     double dist=0;
+    string chosenFile = "../";
     string terminate = "";
-    auto t1 = Clock::now();
-    data.open("../higgs-social_network.txt");
-    dataParse::loadNetworkDual(&data, AdjListGraph, EdgeListGraph);
-    auto t2 = Clock::now();
-    std::cout << "This graph took "
-        << duration_cast<seconds>(t2 - t1).count()
-        << " seconds to parse" << '\n';
-    data.close();
+    bool higgs = false;
+  
+    
     //The line below prints the full adjacency list.
     //NetworkGraph->printEdgeList();
     //cout << "Amount of vertices: " << NetworkGraph->getNumVertices() << endl;
+
     cout << "Welcome to the TweetTeam's Degree of Separation Finder" << endl;
-    cout << "For this stage of the project, we will be using a dataset containing twitter follower-following networks relating to the Higgs Boson discovery." << endl;
-    cout << "These tweets are anonymized, so users are denoted by user ID's ranging from 1 to 456626" << endl;
-    cout << endl;
+    cout << "Please enter the name of the file containing the dataset you would like to analyze. If you would like to use the Higgs-Boson dataset, enter 1." << endl;
+    cin >> chosenFile;
+    if (chosenFile == "1") {
+        chosenFile = "../higgs-social_network.txt";
+        higgs = true;
+    }
+    else {
+        chosenFile = "../" + chosenFile;
+        cout << "Enter the number of vertices in this graph" << endl;
+        cin >> numVert;
+    }
+    AdjList* AdjListGraph = new AdjList(numVert);
+    EdgeList* EdgeListGraph = new EdgeList();
+    cout << "loading graph..." << endl;
+        auto t1 = Clock::now();
+        data.open(chosenFile);
+        dataParse::loadNetworkDual(&data, AdjListGraph, EdgeListGraph);
+        auto t2 = Clock::now();
+        std::cout << "This graph took "
+            << duration_cast<seconds>(t2 - t1).count()
+            << " seconds to parse" << '\n';
+        data.close();
+        cout << endl;
+
+        if (higgs) {
+            cout << "For this stage of the project, we will be using a dataset containing twitter follower-following networks relating to the Higgs Boson discovery." << endl;
+            cout << "These tweets are anonymized, so users are denoted by user ID's ranging from 1 to 456626" << endl;
+            cout << endl;
+        }
+    
     while (terminate != "n")
     {
         cout << "Input the userID of the first user:" << endl;
