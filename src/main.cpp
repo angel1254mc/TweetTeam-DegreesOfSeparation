@@ -83,10 +83,10 @@ int main() {
         }
         getline(cin, trash); //flushes the newline operator;
         cout << "Choose your preferred search method by inputting a number: " << endl;
-        cout << "1 : Djikstra's with Adjacency List" << endl;
-        cout << "2 : Djikstra's with Edge List" << endl;
-        cout << "3 : BFS with Adjacency List" << endl;
-        cout << "4 : BFS with Edge List" << endl;
+        cout << "1 : Find the calculated distance between users using Djikstra's Algorithm with Adjacency List" << endl;
+        cout << "2 : Find the calculated distance between users using Djikstra's Algorithm with Edge List" << endl;
+        cout << "3 : Find degrees of separation between users using BFS with Adjacency List" << endl;
+        cout << "4 : Find degrees of separation between users using BFS with Edge List" << endl;
         while (true)
         {
             if (cin >> searchAlgo)
@@ -107,6 +107,7 @@ int main() {
             std::cout << "This search took "
                 << duration_cast<seconds>(t2 - t1).count()
                 << " seconds!" << '\n';
+            cout << "The shortest weighted path between " << user1 << " and " << user2 << " is: " << dist << endl;
             break;
         case 2:
              t1 = Clock::now();
@@ -115,6 +116,7 @@ int main() {
             std::cout << "This search took "
                 << duration_cast<seconds>(t2 - t1).count()
                 << " seconds!" << '\n';
+            cout << "The shortest weighted path between " << user1 << " and " << user2 << " is: " << dist << endl;
             break;
         case 3:
              t1 = Clock::now();
@@ -123,6 +125,7 @@ int main() {
             std::cout << "This search took "
                 << duration_cast<seconds>(t2 - t1).count()
                 << " seconds!" << '\n';
+            cout << "The minimum degrees of separation between " << user1 << " and " << user2 << " is: " << dist << endl;
             break;
         case 4:
              t1 = Clock::now();
@@ -131,11 +134,12 @@ int main() {
             std::cout << "This search took "
                 << duration_cast<seconds>(t2 - t1).count()
                 << " seconds!" << '\n';
+            cout << "The minimum degrees of separation between " << user1 << " and " << user2 << " is: " << dist << endl;
             break;
         default:
             cout << "Something went wrong with the program" << endl;
         };
-        cout << "The minimum degrees of separation between " << user1 << " and " << user2 << " is: " << dist << endl;
+     
         cout << "Would you like to search again? (type 'y' for \"yes\", or 'n' for \"no\"" << endl;
         cin >> terminate;
     }
