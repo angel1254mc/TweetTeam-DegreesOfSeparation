@@ -140,14 +140,10 @@ void EdgeList::printEdgeList()
     }
 }
 
-/** Algorithm that performs djikstra's search algorithm until the distance is found 
+/** Algorithm that performs djikstra's search algorithm until the distance is found and prints the found path
  * @param node1 denotes the origin node of the search
  * @param node2 denotes the end node of the search
  */
-//double EdgeList::djikstra(int from, int to);
-    //This structure holds edges. The edges can be accessed by either iterating over the map that holds them, or accessing them directly by using edgeList[pair<int,int>(start_vertex, end_vertex)]
-    //You can use getAdjacent(vertex) to obtain the int values of the outedge vertices. 
-    //For instance, if you have a graph 1->2 where 1 and 2 are vertices, using getAdjacent(1) will return a vector containing 2. If you want to obtain the weight of said edge, you can then use edgeList[pair<int,int>(1,2)]
 double EdgeList::djikstra(int from, int to){
 	/*
 	Notes: 
@@ -208,6 +204,11 @@ int EdgeList::getNumVertices()
     return vertices_amount;
 }
 
+
+/** Algorithm that performs a BFS until the degrees of separation between from and to is found and prints the found path
+ * @param node1 denotes the origin node of the search
+ * @param node2 denotes the end node of the search
+ */
 unsigned int EdgeList::degrees_of_separation(int from, int to){
 	if(from == to){
 		return 0;
@@ -406,10 +407,6 @@ void AdjList::printAdjList()
     }
 };
 
-/** Algorithm that performs djikstra's search algorithm until the distance is found 
- * @param node1 denotes the origin node of the search
- * @param node2 denotes the end node of the search
- */
 
 int AdjList::getNumVertices()
 {
@@ -417,6 +414,10 @@ int AdjList::getNumVertices()
 }
 	
 
+/** Algorithm that performs djikstra's search algorithm until the distance is found and prints the found path
+ * @param node1 denotes the origin node of the search
+ * @param node2 denotes the end node of the search
+ */
 double AdjList::djikstra(int from, int to){
 	/*
 	Notes: 
@@ -469,6 +470,11 @@ double AdjList::djikstra(int from, int to){
 	return distances[to];
 }
 
+
+/** Algorithm that performs a BFS until the degrees of separation between from and to is found and prints the found path
+ * @param node1 denotes the origin node of the search
+ * @param node2 denotes the end node of the search
+ */
 unsigned int AdjList::degrees_of_separation(int from, int to){
 	if(from == to){
 		return 0;
