@@ -13,7 +13,7 @@
 #include <unordered_set>
 #include <stack>
 using namespace std;
-//Last updated 12/7/2021 by Jeya Iyadurai (added BFS based degrees of separation)
+//Last updated 12/7/2021 by Jeya Iyadurai (added path for BFS and Djikstra's)
 
 //Arbitrary UserNode class. Currently not in use.
 struct VertexData {
