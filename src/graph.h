@@ -16,8 +16,8 @@ using namespace std;
 
 //Arbitrary UserNode class. Currently not in use.
 struct VertexData {
-    int outdegree;
-    int indegree;
+    float outdegree;
+    float indegree;
     
     public:
         VertexData(): outdegree(0), indegree(0) {};
@@ -329,7 +329,7 @@ double AdjList::getWeight(int from, int to)
 {
     //return get(boost::edge_weight, BoostList)[edge(vertices[from], vertices[to], BoostList).first];
     if (adjList[vertices[from]][to] > 0)
-        return vertexData[to].outdegree/(vertexData[to].indegree)%1;
+        return ((vertexData[to].outdegree)/(vertexData[to].indegree));
     return adjList[vertices[from]][to];
 };
 /** gets the out-edges of a particular vertex (does not get the in-edges)
