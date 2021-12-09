@@ -61,12 +61,14 @@ int main() {
     std::cout << "This graph took ";
         if (higgs) {
             cout << duration_cast<seconds>(t2 - t1).count();
+            cout  << " seconds to parse" << '\n';
         }
         else {
             cout << duration_cast<microseconds>(t2 - t1).count();
+            cout  << " microseconds to parse" << '\n';
         }
        
-       cout  << " microseconds to parse" << '\n';
+       
     data.close();
     cout << endl;
 
