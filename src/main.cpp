@@ -4,6 +4,10 @@
 #include <set>
 #include <iostream>
 #include <string>
+#include <chrono>
+using namespace std::chrono;
+typedef steady_clock Clock;
+
 #include "graph.h"
 #include "dataParse.h"
 using namespace std;
@@ -17,39 +21,126 @@ using namespace std;
 //Here we take advantage of the unordered Map. If there is no value corresponding to either of the usernames, we ask the user to try again
 //We also give the user the option to change both of his decisions by starting again (user types -1)
 int main() {
-    EdgeList* NetworkGraph = new EdgeList();
+    AdjList* AdjListGraph = new AdjList(456627);
+    EdgeList* EdgeListGraph = new EdgeList();
     ifstream data;
-    string user1;
-    string user2;
+    int user1;
+    int user2;
     string trash;
-    string searchAlgo;
-    string terminate;
+    int searchAlgo;
+    double dist=0;
+    string terminate = "";
+    auto t1 = Clock::now();
     data.open("../higgs-social_network.txt");
-    dataParse::loadNetwork(&data, NetworkGraph);
+    dataParse::loadNetworkDual(&data, AdjListGraph, EdgeListGraph);
+    auto t2 = Clock::now();
+    std::cout << "This graph took "
+        << duration_cast<seconds>(t2 - t1).count()
+        << " seconds to parse" << '\n';
+    data.close();
     //The line below prints the full adjacency list.
     //NetworkGraph->printEdgeList();
-    cout << "Amount of vertices: " << NetworkGraph->getNumVertices() << endl;
+    //cout << "Amount of vertices: " << NetworkGraph->getNumVertices() << endl;
     cout << "Welcome to the TweetTeam's Degree of Separation Finder" << endl;
     cout << "For this stage of the project, we will be using a dataset containing twitter follower-following networks relating to the Higgs Boson discovery." << endl;
     cout << "These tweets are anonymized, so users are denoted by user ID's ranging from 1 to 456626" << endl;
     cout << endl;
-    cout << "Input the userID of the first user" << endl;
-    cin >> user1;
-    getline(cin,trash); //flushes the newline operator
-    cout << "Input the userID of the second user" << endl;
-    cin >> user2;
-    getline(cin,trash);
-    cout << "Choose your preferred search method by inputting a number: " << endl;
-    cout << "1 : Djikstra's with Adjacency Matrix"<< endl;
-    cout << "2 : Djikstra's with Edge List" << endl;
-    cin >> searchAlgo;
-    cout << "Beginning search..." << endl;
-    double dist = NetworkGraph->djikstra(stoi(user1), stoi(user2));
-    cout << "The minimum degrees of separation between " << user1 << " and " << user2 << " is: " << dist << endl;
-    cout << "type anything and press enter to terminate the program." << endl;
-    cin >> terminate;
-    data.close();
-    delete NetworkGraph;
+    while (terminate != "n")
+    {
+        cout << "Input the userID of the first user:" << endl;
+        while (true)
+        {
+            if (cin >> user1)
+                break;
+            else
+            {
+                cout << "Enter a valid integer in the range [1,456626]" << endl;
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
+        }
+        getline(cin, trash); //flushes the newline operator
+        cout << "Input the userID of the second user:" << endl;
+        while (true)
+        {
+            if (cin >> user2)
+            {
+                if (user2 == user1)
+                {
+                    cout << "Second user cannot have same ID as first user." << endl;
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    continue;
+                }
+                break;
+            }
+            else
+            {
+                cout << "Enter a valid integer in the range [1,456626]" << endl;
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
+        }
+        getline(cin, trash); //flushes the newline operator;
+        cout << "Choose your preferred search method by inputting a number: " << endl;
+        cout << "1 : Djikstra's with Adjacency List" << endl;
+        cout << "2 : Djikstra's with Edge List" << endl;
+        cout << "3 : BFS with Adjacency List" << endl;
+        cout << "4 : BFS with Edge List" << endl;
+        while (true)
+        {
+            if (cin >> searchAlgo)
+                break;
+            else
+            {
+                cout << "Enter a valid integer in the range [1,4]" << endl;
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
+        }
+        cout << "Beginning search..." << endl;
+        switch (searchAlgo) {
+        case 1:
+             t1 = Clock::now();
+            dist = AdjListGraph->djikstra(user1, user2);
+             t2 = Clock::now();
+            std::cout << "This search took "
+                << duration_cast<seconds>(t2 - t1).count()
+                << " seconds!" << '\n';
+            break;
+        case 2:
+             t1 = Clock::now();
+            dist = EdgeListGraph->djikstra(user1, user2);
+             t2 = Clock::now();
+            std::cout << "This search took "
+                << duration_cast<seconds>(t2 - t1).count()
+                << " seconds!" << '\n';
+            break;
+        case 3:
+             t1 = Clock::now();
+            dist = AdjListGraph->degrees_of_separation(user1, user2);
+             t2 = Clock::now();
+            std::cout << "This search took "
+                << duration_cast<seconds>(t2 - t1).count()
+                << " seconds!" << '\n';
+            break;
+        case 4:
+             t1 = Clock::now();
+            dist = EdgeListGraph->degrees_of_separation(user1, user2);
+             t2 = Clock::now();
+            std::cout << "This search took "
+                << duration_cast<seconds>(t2 - t1).count()
+                << " seconds!" << '\n';
+            break;
+        default:
+            cout << "Something went wrong with the program" << endl;
+        };
+        cout << "The minimum degrees of separation between " << user1 << " and " << user2 << " is: " << dist << endl;
+        cout << "Would you like to search again? (type 'y' for \"yes\", or 'n' for \"no\"" << endl;
+        cin >> terminate;
+    }
+    delete AdjListGraph;
+    delete EdgeListGraph;
     return 0;
 }
 //Just a small graph to test that the adjacency list class is working
